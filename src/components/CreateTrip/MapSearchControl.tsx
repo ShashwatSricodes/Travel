@@ -7,9 +7,10 @@ interface SearchControlProps {
   onSearch: (location: { lat: number; lng: number; name: string }) => void;
   selectedDay: number;
   setSelectedDay: (day: number) => void;
+  duration: number;
 }
 
-const MapSearchControl: React.FC<SearchControlProps> = ({ onSearch, selectedDay, setSelectedDay }) => {
+const MapSearchControl: React.FC<SearchControlProps> = ({ onSearch, selectedDay, setSelectedDay, duration }) => {
   const map = useMap();
   const [searchValue, setSearchValue] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -122,7 +123,7 @@ const MapSearchControl: React.FC<SearchControlProps> = ({ onSearch, selectedDay,
         onChange={(e) => setSelectedDay(Number(e.target.value))}
         className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D]"
       >
-        {[...Array(7)].map((_, i) => (
+        {[...Array(duration)].map((_, i) => (
           <option key={i + 1} value={i + 1}>
             Day {i + 1}
           </option>

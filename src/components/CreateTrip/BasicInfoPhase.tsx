@@ -4,6 +4,8 @@ import { Upload } from 'lucide-react';
 interface BasicInfoPhaseProps {
   title: string;
   setTitle: (title: string) => void;
+  duration: number;
+  setDuration: (duration: number) => void;
   imagePreview: string | null;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onNext: () => void;
@@ -12,6 +14,8 @@ interface BasicInfoPhaseProps {
 const BasicInfoPhase: React.FC<BasicInfoPhaseProps> = ({
   title,
   setTitle,
+  duration,
+  setDuration,
   imagePreview,
   onImageChange,
   onNext,
@@ -32,6 +36,28 @@ const BasicInfoPhase: React.FC<BasicInfoPhaseProps> = ({
             placeholder="7 days itinerary to Bali"
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D] transition-colors"
           />
+        </div>
+
+        {/* Duration Input */}
+        <div>
+          <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+            Trip Duration (Days)
+          </label>
+          <select
+            id="duration"
+            value={duration}
+            onChange={(e) => setDuration(Number(e.target.value))}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D] transition-colors"
+          >
+            {[...Array(14)].map((_, i) => {
+              const days = i + 1;
+              return (
+                <option key={days} value={days}>
+                  {days} {days === 1 ? 'Day' : 'Days'}
+                </option>
+              );
+            })}
+          </select>
         </div>
 
         {/* Cover Image Upload */}

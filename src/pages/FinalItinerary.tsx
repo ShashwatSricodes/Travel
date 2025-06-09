@@ -12,13 +12,14 @@ import { Place, Accommodation, Activity, TipWarning } from '../components/Create
 // Sample data - in a real app, this would come from props, context, or API
 const sampleTripData = {
   title: "7 Days in Magical Bali",
+  duration: 7,
   coverImage: "https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200",
   places: [
-    { day: 1, location: { lat: -8.3405, lng: 115.0920 }, name: "Denpasar Airport" },
-    { day: 2, location: { lat: -8.5069, lng: 115.2625 }, name: "Ubud Monkey Forest" },
-    { day: 3, location: { lat: -8.4095, lng: 115.1889 }, name: "Tegallalang Rice Terraces" },
-    { day: 4, location: { lat: -8.8303, lng: 115.0892 }, name: "Uluwatu Temple" },
-    { day: 5, location: { lat: -8.6500, lng: 115.1372 }, name: "Mount Batur" },
+    { day: 1, location: { lat: -8.3405, lng: 115.0920 }, name: "Ngurah Rai International Airport, Denpasar, Bali, Indonesia" },
+    { day: 2, location: { lat: -8.5069, lng: 115.2625 }, name: "Sacred Monkey Forest Sanctuary, Ubud, Bali, Indonesia" },
+    { day: 3, location: { lat: -8.4095, lng: 115.1889 }, name: "Tegallalang Rice Terraces, Ubud, Bali, Indonesia" },
+    { day: 4, location: { lat: -8.8303, lng: 115.0892 }, name: "Uluwatu Temple, Pecatu, Badung Regency, Bali, Indonesia" },
+    { day: 5, location: { lat: -8.6500, lng: 115.1372 }, name: "Mount Batur, Kintamani, Bangli Regency, Bali, Indonesia" },
   ] as Place[],
   accommodations: [
     {
@@ -150,6 +151,7 @@ const sampleTripData = {
 
 interface TripData {
   title: string;
+  duration: number;
   coverImage: string;
   places: Place[];
   accommodations: Accommodation[];
@@ -179,21 +181,19 @@ const FinalItinerary: React.FC = () => {
     return tripData.activities.reduce((total, activity) => total + activity.cost, 0);
   };
 
-  const totalDays = 7; // This could be calculated or stored in trip data
-
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
       <HeroSection
         title={tripData.title}
         coverImage={tripData.coverImage}
-        totalDays={totalDays}
+        totalDays={tripData.duration}
         totalPlaces={tripData.places.length}
         totalCost={calculateTotalCost()}
       />
 
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <TripOverview
-          totalDays={totalDays}
+          totalDays={tripData.duration}
           totalPlaces={tripData.places.length}
           totalAccommodations={tripData.accommodations.length}
           totalCost={calculateTotalCost()}
@@ -202,11 +202,11 @@ const FinalItinerary: React.FC = () => {
 
         <AccommodationsSection accommodations={tripData.accommodations} />
 
-        <DailyItinerary activities={tripData.activities} totalDays={totalDays} />
+        <DailyItinerary activities={tripData.activities} totalDays={tripData.duration} />
 
         <TipsSection tips={tripData.tips} />
 
-        <CostBreakdown activities={tripData.activities} totalDays={totalDays} />
+        <CostBreakdown activities={tripData.activities} totalDays={tripData.duration} />
 
         <ActionButtons />
       </div>

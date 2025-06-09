@@ -8,6 +8,7 @@ interface AccommodationPhaseProps {
   newAccommodation: Partial<Accommodation>;
   setNewAccommodation: React.Dispatch<React.SetStateAction<Partial<Accommodation>>>;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  duration: number;
   onNext: () => void;
   onBack: () => void;
 }
@@ -18,6 +19,7 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
   newAccommodation,
   setNewAccommodation,
   onImageChange,
+  duration,
   onNext,
   onBack,
 }) => {
@@ -81,7 +83,7 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
                 onChange={(e) => setNewAccommodation(prev => ({ ...prev, startDay: Number(e.target.value) }))}
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D]"
               >
-                {[...Array(7)].map((_, i) => (
+                {[...Array(duration)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>Day {i + 1}</option>
                 ))}
               </select>
@@ -95,7 +97,7 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
                 onChange={(e) => setNewAccommodation(prev => ({ ...prev, endDay: Number(e.target.value) }))}
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D]"
               >
-                {[...Array(7)].map((_, i) => (
+                {[...Array(duration)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>Day {i + 1}</option>
                 ))}
               </select>

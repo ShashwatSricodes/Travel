@@ -8,6 +8,7 @@ interface ItineraryPhaseProps {
   newActivity: Partial<Activity>;
   setNewActivity: React.Dispatch<React.SetStateAction<Partial<Activity>>>;
   onActivityImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  duration: number;
   onNext: () => void;
   onBack: () => void;
 }
@@ -18,6 +19,7 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
   newActivity,
   setNewActivity,
   onActivityImageChange,
+  duration,
   onNext,
   onBack,
 }) => {
@@ -101,6 +103,15 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
     return activities.reduce((total, activity) => total + activity.cost, 0);
   };
 
+  const formatTime = (time: string) => {
+    if (!time) return '09:00';
+    // Ensure time is in HH:MM format
+    const [hours, minutes] = time.split(':');
+    const formattedHours = hours.padStart(2, '0');
+    const formattedMinutes = (minutes || '00').padStart(2, '0');
+    return `${formattedHours}:${formattedMinutes}`;
+  };
+
   return (
     <div className="bg-white rounded-2xl p-8 shadow-sm space-y-6">
       <div className="space-y-6">
@@ -125,7 +136,7 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
                 }
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D]"
               >
-                {[...Array(7)].map((_, i) => (
+                {[...Array(duration)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>
                     Day {i + 1}
                   </option>
@@ -136,7 +147,7 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
               <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
               <input
                 type="time"
-                value={newActivity.time}
+                value={formatTime(newActivity.time || '09:00')}
                 onChange={(e) =>
                   setNewActivity((prev) => ({ ...prev, time: e.target.value }))
                 }
@@ -270,7 +281,7 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
         </div>
 
         {/* Daily Activities List */}
-        {[...Array(7)].map((_, dayIndex) => {
+        {[...Array(duration)].map((_, dayIndex) => {
           const dayNumber = dayIndex + 1;
           const dayActivities = activities.filter((activity) => activity.day === dayNumber);
           const dailyTotal = calculateDailyTotal(dayNumber);
@@ -302,7 +313,7 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="text-sm font-medium text-gray-900">
-                                  {activity.time}
+                                  {formatTime(activity.time)}
                                 </span>
                                 <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">
                                   {getActivityTypeLabel(activity.type)}

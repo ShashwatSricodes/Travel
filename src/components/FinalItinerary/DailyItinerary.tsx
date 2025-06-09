@@ -37,6 +37,15 @@ const DailyItinerary: React.FC<DailyItineraryProps> = ({ activities, totalDays }
       .reduce((total, activity) => total + activity.cost, 0);
   };
 
+  const formatTime = (time: string) => {
+    if (!time) return '09:00';
+    // Ensure time is in HH:MM format
+    const [hours, minutes] = time.split(':');
+    const formattedHours = hours.padStart(2, '0');
+    const formattedMinutes = (minutes || '00').padStart(2, '0');
+    return `${formattedHours}:${formattedMinutes}`;
+  };
+
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Daily Itinerary</h2>
@@ -75,7 +84,7 @@ const DailyItinerary: React.FC<DailyItineraryProps> = ({ activities, totalDays }
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
                                   <Clock className="w-4 h-4 text-gray-500" />
-                                  <span className="text-sm font-medium text-gray-900">{activity.time}</span>
+                                  <span className="text-sm font-medium text-gray-900">{formatTime(activity.time)}</span>
                                   <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">
                                     {getActivityTypeLabel(activity.type)}
                                   </span>

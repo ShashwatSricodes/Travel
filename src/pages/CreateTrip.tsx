@@ -13,6 +13,7 @@ const CreateTrip = () => {
   const navigate = useNavigate();
   const [phase, setPhase] = useState(1);
   const [title, setTitle] = useState('');
+  const [duration, setDuration] = useState(7);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [places, setPlaces] = useState<Place[]>([]);
@@ -84,11 +85,19 @@ const CreateTrip = () => {
   };
 
   const handleFinishTrip = () => {
+    // Filter out places that are just coordinates (no proper name)
+    const namedPlaces = places.filter(place => 
+      place.name && 
+      !place.name.startsWith('Location ') && 
+      place.name.length > 10 // Ensure it's a proper place name, not just coordinates
+    );
+
     // Save trip data to localStorage for the final itinerary page
     const tripData = {
       title,
+      duration,
       coverImage: imagePreview || 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200',
-      places,
+      places: namedPlaces,
       accommodations,
       activities,
       tips,
@@ -112,6 +121,8 @@ const CreateTrip = () => {
             <BasicInfoPhase
               title={title}
               setTitle={setTitle}
+              duration={duration}
+              setDuration={setDuration}
               imagePreview={imagePreview}
               onImageChange={handleImageChange}
               onNext={handleNextPhase}
@@ -124,6 +135,7 @@ const CreateTrip = () => {
               setPlaces={setPlaces}
               selectedDay={selectedDay}
               setSelectedDay={setSelectedDay}
+              duration={duration}
               onNext={handleNextPhase}
               onBack={handlePreviousPhase}
             />
@@ -136,6 +148,7 @@ const CreateTrip = () => {
               newAccommodation={newAccommodation}
               setNewAccommodation={setNewAccommodation}
               onImageChange={handleAccommodationImageChange}
+              duration={duration}
               onNext={handleNextPhase}
               onBack={handlePreviousPhase}
             />
@@ -148,6 +161,7 @@ const CreateTrip = () => {
               newActivity={newActivity}
               setNewActivity={setNewActivity}
               onActivityImageChange={handleActivityImageChange}
+              duration={duration}
               onNext={handleNextPhase}
               onBack={handlePreviousPhase}
             />

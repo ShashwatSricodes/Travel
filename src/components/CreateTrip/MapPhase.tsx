@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { Icon, LatLng } from 'leaflet';
+import { X } from 'lucide-react';
 import { Place } from './types';
 import MapSearchControl from './MapSearchControl';
 
@@ -27,6 +28,7 @@ interface MapPhaseProps {
   setPlaces: React.Dispatch<React.SetStateAction<Place[]>>;
   selectedDay: number;
   setSelectedDay: (day: number) => void;
+  duration: number;
   onNext: () => void;
   onBack: () => void;
 }
@@ -36,6 +38,7 @@ const MapPhase: React.FC<MapPhaseProps> = ({
   setPlaces,
   selectedDay,
   setSelectedDay,
+  duration,
   onNext,
   onBack,
 }) => {
@@ -74,6 +77,10 @@ const MapPhase: React.FC<MapPhaseProps> = ({
     setPendingLocation(null);
   };
 
+  const removePlace = (index: number) => {
+    setPlaces(places.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="bg-white rounded-2xl p-8 shadow-sm space-y-6">
       <div className="rounded-lg overflow-hidden border border-gray-200" style={{ height: '400px' }}>
@@ -87,6 +94,7 @@ const MapPhase: React.FC<MapPhaseProps> = ({
             onSearch={handleSearch} 
             selectedDay={selectedDay}
             setSelectedDay={setSelectedDay}
+            duration={duration}
           />
           {places.map((place, index) => (
             <Marker key={index} position={[place.location.lat, place.location.lng]} icon={defaultIcon} />
@@ -115,6 +123,9 @@ const MapPhase: React.FC<MapPhaseProps> = ({
               <h4 className="font-medium text-blue-900">Add this location to Day {selectedDay}?</h4>
               <p className="text-sm text-blue-700">
                 Coordinates: {pendingLocation.lat.toFixed(4)}, {pendingLocation.lng.toFixed(4)}
+              </p>
+              <p className="text-xs text-blue-600 mt-1">
+                Note: Only named places will appear in your final itinerary. Consider searching for a specific location instead.
               </p>
             </div>
             <div className="flex gap-2">
@@ -148,10 +159,10 @@ const MapPhase: React.FC<MapPhaseProps> = ({
                   <p className="text-sm text-gray-500">{place.name}</p>
                 </div>
                 <button
-                  onClick={() => setPlaces(places.filter((_, i) => i !== index))}
-                  className="text-red-500 hover:text-red-600 text-sm"
+                  onClick={() => removePlace(index)}
+                  className="text-red-500 hover:text-red-600 p-1"
                 >
-                  Remove
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             ))}
