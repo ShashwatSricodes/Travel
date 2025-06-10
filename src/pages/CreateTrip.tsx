@@ -8,10 +8,12 @@ import MapPhase from '../components/CreateTrip/MapPhase';
 import AccommodationPhase from '../components/CreateTrip/AccommodationPhase';
 import ItineraryPhase from '../components/CreateTrip/ItineraryPhase';
 import TipsWarningsPhase from '../components/CreateTrip/TipsWarningsPhase';
+import { apiService } from '../services/api';
 
 const CreateTrip = () => {
   const navigate = useNavigate();
   const [phase, setPhase] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [duration, setDuration] = useState(7);
   const [coverImage, setCoverImage] = useState<File | null>(null);
@@ -84,29 +86,45 @@ const CreateTrip = () => {
     }
   };
 
-  const handleFinishTrip = () => {
-    // Filter out places that are just coordinates (no proper name)
-    const namedPlaces = places.filter(place => 
-      place.name && 
-      !place.name.startsWith('Location ') && 
-      place.name.length > 10 // Ensure it's a proper place name, not just coordinates
-    );
+  const handleFinishTrip = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Filter out places that are just coordinates (no proper name)
+      const namedPlaces = places.filter(place => 
+        place.name && 
+        !place.name.startsWith('Location ') && 
+        place.name.length > 10 // Ensure it's a proper place name, not just coordinates
+      );
 
-    // Save trip data to localStorage for the final itinerary page
-    const tripData = {
-      title,
-      duration,
-      coverImage: imagePreview || 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200',
-      places: namedPlaces,
-      accommodations,
-      activities,
-      tips,
-    };
-    
-    localStorage.setItem('tripData', JSON.stringify(tripData));
-    
-    // Navigate to final itinerary
-    navigate('/final-itinerary');
+      // Prepare trip data for API
+      const tripData = {
+        title,
+        duration,
+        coverImage: imagePreview || 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200',
+        places: namedPlaces,
+        accommodations,
+        activities,
+        tips,
+        createdBy: 'influencer', // You can make this dynamic based on user authentication
+        isPublic: true
+      };
+
+      // Save to database
+      const response = await apiService.createTrip(tripData);
+      
+      if (response.success) {
+        // Navigate to final itinerary with the trip ID/slug
+        navigate(`/final-itinerary/${response.data.slug || response.data._id}`);
+      } else {
+        throw new Error(response.error || 'Failed to create trip');
+      }
+    } catch (error) {
+      console.error('Error creating trip:', error);
+      alert('Failed to create trip. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -175,6 +193,7 @@ const CreateTrip = () => {
               setNewTip={setNewTip}
               onBack={handlePreviousPhase}
               onFinish={handleFinishTrip}
+              isLoading={isLoading}
             />
           )}
         </div>

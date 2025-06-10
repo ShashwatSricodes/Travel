@@ -15,6 +15,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/create-trip" element={<CreateTrip />} />
+          <Route path="/final-itinerary/:tripId" element={<FinalItinerary />} />
           <Route path="/final-itinerary" element={<FinalItinerary />} />
           <Route
             path="/"

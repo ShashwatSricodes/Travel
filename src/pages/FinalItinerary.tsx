@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import HeroSection from '../components/FinalItinerary/HeroSection';
 import TripOverview from '../components/FinalItinerary/TripOverview';
@@ -8,8 +9,9 @@ import TipsSection from '../components/FinalItinerary/TipsSection';
 import CostBreakdown from '../components/FinalItinerary/CostBreakdown';
 import ActionButtons from '../components/FinalItinerary/ActionButtons';
 import { Place, Accommodation, Activity, TipWarning } from '../components/CreateTrip/types';
+import { apiService } from '../services/api';
 
-// Sample data - in a real app, this would come from props, context, or API
+// Sample data - fallback if no trip is found
 const sampleTripData = {
   title: "7 Days in Magical Bali",
   duration: 7,
@@ -160,29 +162,74 @@ interface TripData {
 }
 
 const FinalItinerary: React.FC = () => {
+  const { tripId } = useParams<{ tripId?: string }>();
   const [tripData, setTripData] = useState<TripData>(sampleTripData);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // In a real app, you would fetch this data from localStorage, context, or API
   useEffect(() => {
-    // Try to get data from localStorage (from CreateTrip form)
-    const savedTripData = localStorage.getItem('tripData');
-    if (savedTripData) {
+    const fetchTripData = async () => {
+      setIsLoading(true);
+      setError(null);
+
       try {
-        const parsedData = JSON.parse(savedTripData);
-        setTripData(parsedData);
+        if (tripId) {
+          // Fetch from database using trip ID or slug
+          const response = await apiService.getTrip(tripId);
+          if (response.success) {
+            setTripData(response.data);
+          } else {
+            throw new Error(response.error || 'Failed to fetch trip');
+          }
+        } else {
+          // Try to get data from localStorage (fallback for direct navigation)
+          const savedTripData = localStorage.getItem('tripData');
+          if (savedTripData) {
+            try {
+              const parsedData = JSON.parse(savedTripData);
+              setTripData(parsedData);
+            } catch (error) {
+              console.error('Error parsing saved trip data:', error);
+              // Fall back to sample data
+            }
+          }
+          // If no tripId and no localStorage data, use sample data (already set)
+        }
       } catch (error) {
-        console.error('Error parsing saved trip data:', error);
-        // Fall back to sample data
+        console.error('Error fetching trip data:', error);
+        setError('Failed to load trip data. Showing sample itinerary.');
+        // Keep sample data as fallback
+      } finally {
+        setIsLoading(false);
       }
-    }
-  }, []);
+    };
+
+    fetchTripData();
+  }, [tripId]);
 
   const calculateTotalCost = () => {
     return tripData.activities.reduce((total, activity) => total + activity.cost, 0);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-16 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6ECE9D] mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your itinerary...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
+      {error && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mx-4 mt-4">
+          <p className="text-yellow-800">{error}</p>
+        </div>
+      )}
+      
       <HeroSection
         title={tripData.title}
         coverImage={tripData.coverImage}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, X, AlertTriangle, Info, Shield, DollarSign, MessageCircle, Globe } from 'lucide-react';
+import { Plus, X, AlertTriangle, Info, Shield, DollarSign, MessageCircle, Globe, Loader2 } from 'lucide-react';
 import { TipWarning } from './types';
 
 interface TipsWarningsPhaseProps {
@@ -9,6 +9,7 @@ interface TipsWarningsPhaseProps {
   setNewTip: React.Dispatch<React.SetStateAction<Partial<TipWarning>>>;
   onBack: () => void;
   onFinish: () => void;
+  isLoading?: boolean;
 }
 
 const TipsWarningsPhase: React.FC<TipsWarningsPhaseProps> = ({
@@ -18,6 +19,7 @@ const TipsWarningsPhase: React.FC<TipsWarningsPhaseProps> = ({
   setNewTip,
   onBack,
   onFinish,
+  isLoading = false,
 }) => {
   const addTip = () => {
     if (newTip.title && newTip.description && newTip.category) {
@@ -245,22 +247,32 @@ const TipsWarningsPhase: React.FC<TipsWarningsPhaseProps> = ({
       <div className="flex justify-between pt-4">
         <button
           onClick={onBack}
-          className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          disabled={isLoading}
+          className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
         >
           Back
         </button>
         <div className="flex gap-3">
           <button
             onClick={onFinish}
-            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            disabled={isLoading}
+            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
           >
             Skip Tips
           </button>
           <button
             onClick={onFinish}
-            className="px-6 py-2 bg-[#6ECE9D] text-black rounded-lg hover:bg-[#6ECE9D]/90 transition-colors"
+            disabled={isLoading}
+            className="px-6 py-2 bg-[#6ECE9D] text-black rounded-lg hover:bg-[#6ECE9D]/90 transition-colors disabled:opacity-50 flex items-center gap-2"
           >
-            Create Trip
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Creating Trip...
+              </>
+            ) : (
+              'Create Trip'
+            )}
           </button>
         </div>
       </div>
