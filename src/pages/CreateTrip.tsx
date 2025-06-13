@@ -87,6 +87,19 @@ const CreateTrip = () => {
   };
 
   const handleFinishTrip = async () => {
+    // Validate required fields before proceeding
+    if (!title.trim()) {
+      alert('Please enter a trip title before creating the trip.');
+      setPhase(1); // Go back to the first phase to enter title
+      return;
+    }
+
+    if (!duration || duration < 1) {
+      alert('Please select a valid trip duration.');
+      setPhase(1); // Go back to the first phase to select duration
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -99,7 +112,7 @@ const CreateTrip = () => {
 
       // Prepare trip data for API
       const tripData = {
-        title,
+        title: title.trim(),
         duration,
         coverImage: imagePreview || 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200',
         places: namedPlaces,
@@ -121,7 +134,20 @@ const CreateTrip = () => {
       }
     } catch (error) {
       console.error('Error creating trip:', error);
-      alert('Failed to create trip. Please try again.');
+      
+      // Provide more specific error messages
+      if (error instanceof Error) {
+        if (error.message.includes('Title and duration are required')) {
+          alert('Please make sure you have entered a trip title and selected a duration.');
+          setPhase(1); // Go back to basic info phase
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          alert('Network error. Please check your internet connection and try again.');
+        } else {
+          alert(`Failed to create trip: ${error.message}`);
+        }
+      } else {
+        alert('Failed to create trip. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }

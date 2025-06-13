@@ -20,13 +20,21 @@ const BasicInfoPhase: React.FC<BasicInfoPhaseProps> = ({
   onImageChange,
   onNext,
 }) => {
+  const isFormValid = title.trim().length > 0;
+
+  const handleNext = () => {
+    if (isFormValid) {
+      onNext();
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl p-8 shadow-sm">
       <div className="space-y-6">
         {/* Title Input */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-            Trip Title
+            Trip Title *
           </label>
           <input
             type="text"
@@ -34,8 +42,15 @@ const BasicInfoPhase: React.FC<BasicInfoPhaseProps> = ({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="7 days itinerary to Bali"
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D] transition-colors"
+            className={`w-full px-4 py-2 rounded-lg border transition-colors ${
+              title.trim().length === 0 && title.length > 0
+                ? 'border-red-300 focus:ring-2 focus:ring-red-500/50 focus:border-red-500'
+                : 'border-gray-300 focus:ring-2 focus:ring-[#6ECE9D]/50 focus:border-[#6ECE9D]'
+            }`}
           />
+          {title.trim().length === 0 && title.length > 0 && (
+            <p className="mt-1 text-sm text-red-600">Trip title is required</p>
+          )}
         </div>
 
         {/* Duration Input */}
@@ -96,11 +111,22 @@ const BasicInfoPhase: React.FC<BasicInfoPhaseProps> = ({
 
         {/* Next Button */}
         <button
-          onClick={onNext}
-          className="w-full bg-[#6ECE9D] text-black font-medium py-2 rounded-lg hover:bg-[#6ECE9D]/90 transition-colors"
+          onClick={handleNext}
+          disabled={!isFormValid}
+          className={`w-full font-medium py-2 rounded-lg transition-colors ${
+            isFormValid
+              ? 'bg-[#6ECE9D] text-black hover:bg-[#6ECE9D]/90'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
           Continue to Places
         </button>
+        
+        {!isFormValid && (
+          <p className="text-sm text-gray-500 text-center">
+            Please enter a trip title to continue
+          </p>
+        )}
       </div>
     </div>
   );
