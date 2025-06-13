@@ -13,6 +13,8 @@ import { apiService } from '../services/api';
 
 // Sample data - fallback if no trip is found
 const sampleTripData = {
+  _id: 'sample-trip-id',
+  slug: 'magical-bali-adventure',
   title: "7 Days in Magical Bali",
   duration: 7,
   coverImage: "https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200",
@@ -152,6 +154,8 @@ const sampleTripData = {
 };
 
 interface TripData {
+  _id?: string;
+  slug?: string;
   title: string;
   duration: number;
   coverImage: string;
@@ -255,7 +259,10 @@ const FinalItinerary: React.FC = () => {
 
         <CostBreakdown activities={tripData.activities} totalDays={tripData.duration} />
 
-        <ActionButtons />
+        <ActionButtons 
+          tripId={tripData._id || tripData.slug} 
+          tripTitle={tripData.title}
+        />
       </div>
     </div>
   );

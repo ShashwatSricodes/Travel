@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { BeakerIcon, Menu, X } from 'lucide-react';
+import { MapPin, Menu, X } from 'lucide-react';
 import NavLink from './NavLink';
 import NavButton from './NavButton';
+import AuthButton from '../Auth/AuthButton';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,6 +28,14 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMenuOpen(false);
+  };
+
   return (
     <header
       className={`
@@ -38,10 +47,10 @@ const Navbar = () => {
         {/* Logo */}
         <a href="/" className="flex items-center gap-2">
           <div className="text-[#6ECE9D]">
-            <BeakerIcon size={24} className="fill-[#6ECE9D]/10" />
+            <MapPin size={28} className="fill-[#6ECE9D]/10" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-gray-800">
-            HEX<span className="font-extrabold">LAB</span>
+          <span className="text-2xl font-bold tracking-tight text-gray-800">
+            Evora
           </span>
         </a>
 
@@ -49,12 +58,15 @@ const Navbar = () => {
         <nav className="hidden items-center gap-8 md:flex">
           <ul className="flex items-center gap-8">
             <NavLink href="/" isActive>Home</NavLink>
-            <NavLink href="/features">Features</NavLink>
-            <NavLink href="/pricing">Pricing</NavLink>
-            <NavLink href="/testimonials">Testimonials</NavLink>
-            <NavLink href="/final-itinerary">FAQ</NavLink>
+            <NavLink href="#features" onClick={() => scrollToSection('features')}>Features</NavLink>
+            <NavLink href="#pricing" onClick={() => scrollToSection('pricing')}>Pricing</NavLink>
+            <NavLink href="#testimonials" onClick={() => scrollToSection('testimonials')}>Testimonials</NavLink>
+            <NavLink href="/browse">Browse Trips</NavLink>
           </ul>
-          <NavButton>Try It For Free</NavButton>
+          <div className="flex items-center gap-3">
+            <AuthButton />
+            <NavButton>Create Trip</NavButton>
+          </div>
         </nav>
 
         {/* Mobile menu toggle */}
@@ -78,12 +90,13 @@ const Navbar = () => {
         <nav>
           <ul className="flex flex-col gap-6">
             <NavLink href="/" isActive isMobile>Home</NavLink>
-            <NavLink href="/features" isMobile>Features</NavLink>
-            <NavLink href="/pricing" isMobile>Pricing</NavLink>
-            <NavLink href="/testimonials" isMobile>Testimonials</NavLink>
-            <NavLink href="/final-itinerary" isMobile>FAQ</NavLink>
-            <li className="pt-4">
-              <NavButton fullWidth>Try It For Free</NavButton>
+            <NavLink href="#features" isMobile onClick={() => scrollToSection('features')}>Features</NavLink>
+            <NavLink href="#pricing" isMobile onClick={() => scrollToSection('pricing')}>Pricing</NavLink>
+            <NavLink href="#testimonials" isMobile onClick={() => scrollToSection('testimonials')}>Testimonials</NavLink>
+            <NavLink href="/browse" isMobile>Browse Trips</NavLink>
+            <li className="pt-4 space-y-3">
+              <AuthButton fullWidth />
+              <NavButton fullWidth>Create Trip</NavButton>
             </li>
           </ul>
         </nav>
