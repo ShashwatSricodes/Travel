@@ -16,7 +16,6 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/travel
 
 // Configure mongoose with better timeout settings
 mongoose.set('bufferCommands', false);
-mongoose.set('bufferMaxEntries', 0);
 
 const connectDB = async () => {
   try {
@@ -24,7 +23,6 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
       socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
       bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0 // Disable mongoose buffering
     });
     console.log('✅ Connected to MongoDB');
   } catch (error) {
