@@ -8,10 +8,13 @@ import MapPhase from '../components/CreateTrip/MapPhase';
 import AccommodationPhase from '../components/CreateTrip/AccommodationPhase';
 import ItineraryPhase from '../components/CreateTrip/ItineraryPhase';
 import TipsWarningsPhase from '../components/CreateTrip/TipsWarningsPhase';
+import ProtectedRoute from '../components/Auth/ProtectedRoute';
+import { useAuth } from '../components/Auth/useAuth';
 import { apiService } from '../services/api';
 
-const CreateTrip = () => {
+const CreateTripContent = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [phase, setPhase] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState('');
@@ -119,7 +122,7 @@ const CreateTrip = () => {
         accommodations,
         activities,
         tips,
-        createdBy: 'influencer', // You can make this dynamic based on user authentication
+        createdBy: user?.name || 'Anonymous User',
         isPublic: true
       };
 
@@ -157,7 +160,12 @@ const CreateTrip = () => {
     <div className="min-h-screen bg-gray-50 pt-16">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Create New Trip</h1>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Trip</h1>
+            <p className="text-gray-600">
+              Welcome back, {user?.name}! Let's create your next amazing itinerary.
+            </p>
+          </div>
 
           <ProgressIndicator currentPhase={phase} totalPhases={5} />
 
@@ -225,6 +233,14 @@ const CreateTrip = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const CreateTrip = () => {
+  return (
+    <ProtectedRoute>
+      <CreateTripContent />
+    </ProtectedRoute>
   );
 };
 
