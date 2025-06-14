@@ -30,6 +30,24 @@ function App() {
               </main>
             }
           />
+          {/* Catch all route for 404 */}
+          <Route 
+            path="*" 
+            element={
+              <div className="min-h-screen bg-gray-50 pt-16 flex items-center justify-center">
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-4">404 - Page Not Found</h1>
+                  <p className="text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
+                  <a 
+                    href="/" 
+                    className="px-6 py-3 bg-[#6ECE9D] text-black font-medium rounded-lg hover:bg-[#6ECE9D]/90 transition-colors"
+                  >
+                    Go Home
+                  </a>
+                </div>
+              </div>
+            } 
+          />
         </Routes>
       </div>
     </Router>
