@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import CreateTrip from './pages/CreateTrip';
@@ -8,12 +8,21 @@ import HeroSection from './components/Home/HeroSection';
 import FeaturesSection from './components/Home/FeaturesSection';
 import TestimonialsSection from './components/Home/TestimonialsSection';
 import PricingSection from './components/Home/PricingSection';
+import AuthModal from './components/AuthModal'; // ✅ Import the modal
 
 function App() {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  const handleAuthSuccess = (user: { name: string; email: string; token: string }) => {
+    console.log('Authenticated:', user);
+    // You can set global user context or redirect
+  };
+
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
+      <div className="min-h-screen bg-gray-50 relative">
+        <Navbar onLoginClick={() => setIsAuthOpen(true)} /> {/* ✅ Pass toggle handler */}
+        
         <Routes>
           <Route path="/create-trip" element={<CreateTrip />} />
           <Route path="/final-itinerary/:tripId" element={<FinalItinerary />} />
@@ -30,7 +39,6 @@ function App() {
               </main>
             }
           />
-          {/* Catch all route for 404 */}
           <Route 
             path="*" 
             element={
@@ -49,6 +57,13 @@ function App() {
             } 
           />
         </Routes>
+
+        {/* ✅ Auth Modal Rendered Globally */}
+        <AuthModal 
+          isOpen={isAuthOpen} 
+          onClose={() => setIsAuthOpen(false)} 
+          onAuthSuccess={handleAuthSuccess} 
+        />
       </div>
     </Router>
   );
