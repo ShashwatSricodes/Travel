@@ -8,7 +8,7 @@ import HeroSection from './components/Home/HeroSection';
 import FeaturesSection from './components/Home/FeaturesSection';
 import TestimonialsSection from './components/Home/TestimonialsSection';
 import PricingSection from './components/Home/PricingSection';
-import AuthModal from './Auth/AuthModal'; // ✅ Import the modal
+import AuthModal from './components/Auth/AuthModal'; // ✅ Import the modal
 
 function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
