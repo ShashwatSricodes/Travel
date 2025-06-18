@@ -29,12 +29,12 @@ const HeroSection = () => {
       
       <div className="mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row px-4">
         <NavButton>Start Creating</NavButton>
-        <button 
-          onClick={() => scrollToSection('browse')}
-          className="w-full sm:w-auto rounded-lg bg-gray-100 px-6 py-3 font-medium text-gray-900 transition-all hover:bg-gray-200"
+        <a
+          href="/browse"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-6 py-3 font-medium text-gray-900 transition-all hover:bg-gray-200 shadow-xs focus:outline-none focus-visible:ring-[3px] focus-visible:ring-gray-300/50"
         >
           Browse Itineraries
-        </button>
+        </a>
       </div>
 
       {/* Stats */}
