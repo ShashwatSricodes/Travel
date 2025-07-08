@@ -1,5 +1,6 @@
 import React from 'react';
 import { Upload } from 'lucide-react';
+import { convertFileToBase64, compressImage } from '../../utils/imageUtils';
 
 interface BasicInfoPhaseProps {
   title: string;
@@ -7,7 +8,7 @@ interface BasicInfoPhaseProps {
   duration: number;
   setDuration: (duration: number) => void;
   imagePreview: string | null;
-  onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageChange: (base64Image: string) => void;
   onNext: () => void;
 }
 
@@ -25,6 +26,27 @@ const BasicInfoPhase: React.FC<BasicInfoPhaseProps> = ({
   const handleNext = () => {
     if (isFormValid) {
       onNext();
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        // Compress and convert to base64
+        const compressedBase64 = await compressImage(file, 1200, 0.8);
+        onImageChange(compressedBase64);
+      } catch (error) {
+        console.error('Error processing image:', error);
+        // Fallback to regular base64 conversion
+        try {
+          const base64 = await convertFileToBase64(file);
+          onImageChange(base64);
+        } catch (fallbackError) {
+          console.error('Error converting image to base64:', fallbackError);
+          alert('Failed to process image. Please try a different image.');
+        }
+      }
     }
   };
 
@@ -82,7 +104,7 @@ const BasicInfoPhase: React.FC<BasicInfoPhaseProps> = ({
             <input
               type="file"
               accept="image/*"
-              onChange={onImageChange}
+              onChange={handleImageChange}
               className="hidden"
               id="cover-image"
             />

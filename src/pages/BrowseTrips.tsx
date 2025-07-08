@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Calendar, DollarSign, Filter, Heart, Eye } from 'lucide-react';
 import { apiService } from '../services/api';
+import { getImageSrc } from '../utils/imageUtils';
 
 interface TripCard {
   _id: string;
@@ -165,7 +166,7 @@ const BrowseTrips: React.FC = () => {
                 <div key={trip._id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                   <div className="relative">
                     <img
-                      src={trip.coverImage}
+                      src={getImageSrc(trip.coverImage)}
                       alt={trip.title}
                       className="w-full h-48 object-cover"
                     />

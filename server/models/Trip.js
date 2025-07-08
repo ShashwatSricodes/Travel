@@ -43,7 +43,7 @@ const accommodationSchema = new mongoose.Schema({
     default: ''
   },
   images: [{
-    type: String
+    type: String // Base64 encoded images
   }]
 });
 
@@ -82,7 +82,7 @@ const activitySchema = new mongoose.Schema({
     default: ''
   },
   images: [{
-    type: String
+    type: String // Base64 encoded images
   }]
 });
 
@@ -125,7 +125,7 @@ const tripSchema = new mongoose.Schema({
   },
   coverImage: {
     type: String,
-    default: 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200'
+    default: 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200' // Can be URL or base64
   },
   places: [placeSchema],
   accommodations: [accommodationSchema],

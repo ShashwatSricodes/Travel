@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Camera } from 'lucide-react';
+import { getImageSrc } from '../../utils/imageUtils';
 
 interface ImageCarouselProps {
   images: string[];
@@ -37,7 +38,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, title, className 
     <div className={`relative group ${className}`}>
       <div className="relative overflow-hidden rounded-lg">
         <img
-          src={images[currentIndex]}
+          src={getImageSrc(images[currentIndex])}
           alt={`${title} ${currentIndex + 1}`}
           className="w-full h-full object-cover transition-transform duration-300"
         />

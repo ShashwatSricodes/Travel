@@ -19,8 +19,7 @@ const CreateTripContent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [duration, setDuration] = useState(7);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [coverImage, setCoverImage] = useState<string>('');
   const [places, setPlaces] = useState<Place[]>([]);
   const [selectedDay, setSelectedDay] = useState(1);
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
@@ -43,38 +42,22 @@ const CreateTripContent = () => {
     priority: 'medium',
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setCoverImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageChange = (base64Image: string) => {
+    setCoverImage(base64Image);
   };
 
-  const handleAccommodationImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
-      setNewAccommodation((prev) => ({
-        ...prev,
-        images: [...(prev.images || []), ...newImages],
-      }));
-    }
+  const handleAccommodationImageChange = (images: string[]) => {
+    setNewAccommodation((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), ...images],
+    }));
   };
 
-  const handleActivityImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const newImages = Array.from(files).map((file) => URL.createObjectURL(file));
-      setNewActivity((prev) => ({
-        ...prev,
-        images: [...(prev.images || []), ...newImages],
-      }));
-    }
+  const handleActivityImageChange = (images: string[]) => {
+    setNewActivity((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), ...images],
+    }));
   };
 
   const handleNextPhase = () => {
@@ -117,7 +100,7 @@ const CreateTripContent = () => {
       const tripData = {
         title: title.trim(),
         duration,
-        coverImage: imagePreview || 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200',
+        coverImage: coverImage || 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200',
         places: namedPlaces,
         accommodations,
         activities,
@@ -175,7 +158,7 @@ const CreateTripContent = () => {
               setTitle={setTitle}
               duration={duration}
               setDuration={setDuration}
-              imagePreview={imagePreview}
+              imagePreview={coverImage}
               onImageChange={handleImageChange}
               onNext={handleNextPhase}
             />

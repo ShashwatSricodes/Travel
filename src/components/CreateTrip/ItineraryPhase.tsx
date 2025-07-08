@@ -1,13 +1,14 @@
 import React from 'react';
 import { X, MapPin, Utensils, Bus, DollarSign, Plus, ExternalLink, Upload } from 'lucide-react';
 import { Activity } from './types';
+import { convertFilesToBase64, compressImage } from '../../utils/imageUtils';
 
 interface ItineraryPhaseProps {
   activities: Activity[];
   setActivities: React.Dispatch<React.SetStateAction<Activity[]>>;
   newActivity: Partial<Activity>;
   setNewActivity: React.Dispatch<React.SetStateAction<Partial<Activity>>>;
-  onActivityImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onActivityImageChange: (images: string[]) => void;
   duration: number;
   onNext: () => void;
   onBack: () => void;
@@ -23,6 +24,33 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
   onNext,
   onBack,
 }) => {
+  const handleActivityImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      try {
+        const base64Images: string[] = [];
+        
+        for (const file of Array.from(files)) {
+          try {
+            const compressedBase64 = await compressImage(file, 800, 0.8);
+            base64Images.push(compressedBase64);
+          } catch (error) {
+            console.error('Error compressing image:', error);
+            // Fallback to regular base64 conversion
+            const base64 = await convertFilesToBase64(files);
+            base64Images.push(...base64);
+            break;
+          }
+        }
+        
+        onActivityImageChange(base64Images);
+      } catch (error) {
+        console.error('Error processing images:', error);
+        alert('Failed to process some images. Please try again.');
+      }
+    }
+  };
+
   const addActivity = () => {
     if (newActivity.title && newActivity.description) {
       const activity: Activity = {
@@ -237,7 +265,7 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={onActivityImageChange}
+                onChange={handleActivityImageChange}
                 className="hidden"
                 id="activity-images"
               />

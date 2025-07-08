@@ -1,13 +1,14 @@
 import React from 'react';
 import { Plus, X } from 'lucide-react';
 import { Accommodation } from './types';
+import { convertFilesToBase64, compressImage } from '../../utils/imageUtils';
 
 interface AccommodationPhaseProps {
   accommodations: Accommodation[];
   setAccommodations: React.Dispatch<React.SetStateAction<Accommodation[]>>;
   newAccommodation: Partial<Accommodation>;
   setNewAccommodation: React.Dispatch<React.SetStateAction<Partial<Accommodation>>>;
-  onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageChange: (images: string[]) => void;
   duration: number;
   onNext: () => void;
   onBack: () => void;
@@ -23,6 +24,33 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
   onNext,
   onBack,
 }) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      try {
+        const base64Images: string[] = [];
+        
+        for (const file of Array.from(files)) {
+          try {
+            const compressedBase64 = await compressImage(file, 800, 0.8);
+            base64Images.push(compressedBase64);
+          } catch (error) {
+            console.error('Error compressing image:', error);
+            // Fallback to regular base64 conversion
+            const base64 = await convertFilesToBase64(files);
+            base64Images.push(...base64);
+            break;
+          }
+        }
+        
+        onImageChange(base64Images);
+      } catch (error) {
+        console.error('Error processing images:', error);
+        alert('Failed to process some images. Please try again.');
+      }
+    }
+  };
+
   const addAccommodation = () => {
     if (newAccommodation.name && newAccommodation.link) {
       const accommodation: Accommodation = {
@@ -126,7 +154,7 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={onImageChange}
+                onChange={handleImageChange}
                 className="hidden"
                 id="accommodation-images"
               />

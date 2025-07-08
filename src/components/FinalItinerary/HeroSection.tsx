@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, MapPin, DollarSign } from 'lucide-react';
+import { getImageSrc } from '../../utils/imageUtils';
 
 interface HeroSectionProps {
   title: string;
@@ -19,7 +20,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <div className="relative h-96 overflow-hidden">
       <img
-        src={coverImage}
+        src={getImageSrc(coverImage)}
         alt={title}
         className="w-full h-full object-cover"
       />
