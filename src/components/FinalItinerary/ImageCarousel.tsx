@@ -8,12 +8,12 @@ interface ImageCarouselProps {
   className?: string;
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, title, className = '' }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, title, className = 'aspect-square' }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!images || images.length === 0) {
     return (
-      <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`}>
+      <div className={`bg-gray-100 rounded-lg flex items-center justify-center aspect-square ${className}`}>
         <div className="text-center text-gray-500">
           <Camera className="w-8 h-8 mx-auto mb-2" />
           <p className="text-sm">No images available</p>
@@ -40,7 +40,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, title, className 
         <img
           src={getImageSrc(images[currentIndex])}
           alt={`${title} ${currentIndex + 1}`}
-          className="w-full h-full object-cover transition-transform duration-300"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         
         {images.length > 1 && (
@@ -48,19 +48,19 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, title, className 
             {/* Navigation Arrows */}
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-black/70 hover:scale-110"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-black/70 hover:scale-110"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
 
             {/* Image Counter */}
-            <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+            <div className="absolute top-2 right-2 bg-black/60 text-white px-2 py-1 rounded-full text-xs font-medium">
               {currentIndex + 1} / {images.length}
             </div>
 
@@ -70,8 +70,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, title, className 
                 <button
                   key={index}
                   onClick={() => goToImage(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentIndex ? 'bg-white' : 'bg-white/50'
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    index === currentIndex ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
                   }`}
                 />
               ))}

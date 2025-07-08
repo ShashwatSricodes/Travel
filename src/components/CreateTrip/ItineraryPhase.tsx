@@ -278,17 +278,25 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
               </label>
               
               {newActivity.images && newActivity.images.length > 0 && (
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+                <div className={`
+                  gap-2 
+                  ${newActivity.images.length === 1 
+                    ? 'grid grid-cols-1 max-w-xs' 
+                    : newActivity.images.length === 2 
+                      ? 'grid grid-cols-2 max-w-sm' 
+                      : 'grid grid-cols-3 md:grid-cols-4'
+                  }
+                `}>
                   {newActivity.images.map((image, index) => (
                     <div key={index} className="relative group">
                       <img
                         src={image}
                         alt={`Activity ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-lg aspect-square"
+                        className="w-full aspect-square object-cover rounded-lg transition-transform duration-200 group-hover:scale-105"
                       />
                       <button
                         onClick={() => removeActivityImage(index)}
-                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -377,17 +385,25 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
                         </div>
                         
                         {activity.images.length > 0 && (
-                          <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+                          <div className={`
+                            gap-2 
+                            ${activity.images.length === 1 
+                              ? 'grid grid-cols-1 max-w-xs' 
+                              : activity.images.length === 2 
+                                ? 'grid grid-cols-2 max-w-sm' 
+                                : 'grid grid-cols-3 md:grid-cols-4'
+                            }
+                          `}>
                             {activity.images.map((image, index) => (
                               <div key={index} className="relative group">
                                 <img
                                   src={image}
                                   alt={`${activity.title} ${index + 1}`}
-                                  className="w-full h-16 object-cover rounded-lg aspect-square"
+                                  className="w-full aspect-square object-cover rounded-lg transition-transform duration-200 group-hover:scale-105"
                                 />
                                 <button
                                   onClick={() => removeExistingActivityImage(activity.id, index)}
-                                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600"
                                 >
                                   <X className="w-3 h-3" />
                                 </button>

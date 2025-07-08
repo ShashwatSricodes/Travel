@@ -72,9 +72,9 @@ const DailyItinerary: React.FC<DailyItineraryProps> = ({ activities, totalDays }
                     .sort((a, b) => a.time.localeCompare(b.time))
                     .map((activity) => (
                       <div key={activity.id} className="border border-gray-200 rounded-lg p-6">
-                        <div className="flex flex-col lg:flex-row gap-6">
+                        <div className="space-y-4">
                           {/* Activity Details */}
-                          <div className="flex-1">
+                          <div>
                             <div className="flex items-start gap-4">
                               <div className="flex-shrink-0 mt-1">
                                 <div className="w-10 h-10 bg-[#6ECE9D]/10 rounded-lg flex items-center justify-center text-[#6ECE9D]">
@@ -113,13 +113,48 @@ const DailyItinerary: React.FC<DailyItineraryProps> = ({ activities, totalDays }
                           </div>
 
                           {/* Activity Images */}
-                          <div className="w-full lg:w-48 flex-shrink-0">
+                          <div>
                             {activity.images.length > 0 && (
-                              <ImageCarousel
-                                images={activity.images}
-                                title={activity.title}
-                                className="h-48 w-48 mx-auto lg:mx-0"
-                              />
+                              <div className={`
+                                ${activity.images.length === 1 
+                                  ? 'max-w-md mx-auto' 
+                                  : activity.images.length === 2 
+                                    ? 'grid grid-cols-2 gap-2' 
+                                    : activity.images.length === 3
+                                      ? 'grid grid-cols-2 gap-2'
+                                      : 'grid grid-cols-2 gap-2'
+                                }
+                              `}>
+                                {activity.images.slice(0, 4).map((image, index) => (
+                                  <div 
+                                    key={index} 
+                                    className={`
+                                      relative overflow-hidden rounded-lg cursor-pointer group
+                                      ${activity.images.length === 1 
+                                        ? 'aspect-[4/3]' 
+                                        : activity.images.length === 3 && index === 0
+                                          ? 'row-span-2 aspect-square'
+                                          : 'aspect-square'
+                                      }
+                                      ${activity.images.length > 4 && index === 3 ? 'relative' : ''}
+                                    `}
+                                  >
+                                    <img
+                                      src={image}
+                                      alt={`${activity.title} ${index + 1}`}
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    />
+                                    {activity.images.length > 4 && index === 3 && (
+                                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                        <span className="text-white font-semibold text-lg">
+                                          +{activity.images.length - 4}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                                  </div>
+                                ))}
+                              </div>
                             )}
                           </div>
                         </div>

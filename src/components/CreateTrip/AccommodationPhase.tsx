@@ -166,17 +166,25 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
                 Add Images
               </label>
               {newAccommodation.images && newAccommodation.images.length > 0 && (
-                <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+                <div className={`
+                  gap-2 
+                  ${newAccommodation.images.length === 1 
+                    ? 'grid grid-cols-1 max-w-xs' 
+                    : newAccommodation.images.length === 2 
+                      ? 'grid grid-cols-2 max-w-sm' 
+                      : 'grid grid-cols-3 md:grid-cols-4'
+                  }
+                `}>
                   {newAccommodation.images.map((image, index) => (
                     <div key={index} className="relative">
                       <img
                         src={image}
                         alt={`Accommodation ${index + 1}`}
-                        className="w-full h-16 object-cover rounded-lg aspect-square"
+                        className="w-full aspect-square object-cover rounded-lg transition-transform duration-200 hover:scale-105"
                       />
                       <button
                         onClick={() => removeAccommodationImage(index)}
-                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-80 hover:opacity-100 hover:bg-red-600 transition-all duration-200"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -218,13 +226,21 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
                   </div>
                   
                   {accommodation.images.length > 0 && (
-                    <div className="grid grid-cols-4 md:grid-cols-6 gap-2 mb-2">
+                    <div className={`
+                      gap-2 mb-2
+                      ${accommodation.images.length === 1 
+                        ? 'grid grid-cols-1 max-w-xs' 
+                        : accommodation.images.length === 2 
+                          ? 'grid grid-cols-2 max-w-sm' 
+                          : 'grid grid-cols-3 md:grid-cols-4'
+                      }
+                    `}>
                       {accommodation.images.map((image, index) => (
                         <img
                           key={index}
                           src={image}
                           alt={`${accommodation.name} ${index + 1}`}
-                          className="w-full h-16 object-cover rounded-lg aspect-square"
+                          className="w-full aspect-square object-cover rounded-lg transition-transform duration-200 hover:scale-105 cursor-pointer"
                         />
                       ))}
                     </div>

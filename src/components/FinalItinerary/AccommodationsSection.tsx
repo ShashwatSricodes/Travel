@@ -45,11 +45,46 @@ const AccommodationsSection: React.FC<AccommodationsSectionProps> = ({ accommoda
               )}
             </div>
             
-            <ImageCarousel
-              images={accommodation.images}
-              title={accommodation.name}
-              className="h-64 w-full"
-            />
+            {accommodation.images.length > 0 && (
+              <div className={`
+                ${accommodation.images.length === 1 
+                  ? 'aspect-[4/3]' 
+                  : accommodation.images.length === 2 
+                    ? 'grid grid-cols-2 gap-2' 
+                    : 'grid grid-cols-2 gap-2'
+                }
+              `}>
+                {accommodation.images.slice(0, 4).map((image, index) => (
+                  <div 
+                    key={index} 
+                    className={`
+                      relative overflow-hidden rounded-lg cursor-pointer group
+                      ${accommodation.images.length === 1 
+                        ? 'col-span-2' 
+                        : accommodation.images.length === 3 && index === 0
+                          ? 'row-span-2 aspect-square'
+                          : 'aspect-square'
+                      }
+                      ${accommodation.images.length > 4 && index === 3 ? 'relative' : ''}
+                    `}
+                  >
+                    <img
+                      src={image}
+                      alt={`${accommodation.name} ${index + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    {accommodation.images.length > 4 && index === 3 && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <span className="text-white font-semibold text-lg">
+                          +{accommodation.images.length - 4}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
