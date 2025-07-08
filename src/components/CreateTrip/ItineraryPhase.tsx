@@ -278,13 +278,13 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
               </label>
               
               {newActivity.images && newActivity.images.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
                   {newActivity.images.map((image, index) => (
                     <div key={index} className="relative group">
                       <img
                         src={image}
                         alt={`Activity ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-lg"
+                        className="w-full h-20 object-cover rounded-lg aspect-square"
                       />
                       <button
                         onClick={() => removeActivityImage(index)}
@@ -377,13 +377,13 @@ const ItineraryPhase: React.FC<ItineraryPhaseProps> = ({
                         </div>
                         
                         {activity.images.length > 0 && (
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                          <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
                             {activity.images.map((image, index) => (
                               <div key={index} className="relative group">
                                 <img
                                   src={image}
                                   alt={`${activity.title} ${index + 1}`}
-                                  className="w-full h-20 object-cover rounded-lg"
+                                  className="w-full h-16 object-cover rounded-lg aspect-square"
                                 />
                                 <button
                                   onClick={() => removeExistingActivityImage(activity.id, index)}

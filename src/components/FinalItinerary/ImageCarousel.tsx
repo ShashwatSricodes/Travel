@@ -36,12 +36,11 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, title, className 
 
   return (
     <div className={`relative group overflow-hidden rounded-lg ${className}`}>
-      <div className="relative overflow-hidden rounded-lg">
+      <div className="relative overflow-hidden rounded-lg w-full h-full">
         <img
           src={getImageSrc(images[currentIndex])}
           alt={`${title} ${currentIndex + 1}`}
           className="w-full h-full object-cover transition-transform duration-300"
-          style={{ maxHeight: '100%', maxWidth: '100%' }}
         />
         
         {images.length > 1 && (

@@ -166,13 +166,13 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
                 Add Images
               </label>
               {newAccommodation.images && newAccommodation.images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
                   {newAccommodation.images.map((image, index) => (
                     <div key={index} className="relative">
                       <img
                         src={image}
                         alt={`Accommodation ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-lg"
+                        className="w-full h-16 object-cover rounded-lg aspect-square"
                       />
                       <button
                         onClick={() => removeAccommodationImage(index)}
@@ -218,13 +218,13 @@ const AccommodationPhase: React.FC<AccommodationPhaseProps> = ({
                   </div>
                   
                   {accommodation.images.length > 0 && (
-                    <div className="grid grid-cols-3 gap-2 mb-2">
+                    <div className="grid grid-cols-4 md:grid-cols-6 gap-2 mb-2">
                       {accommodation.images.map((image, index) => (
                         <img
                           key={index}
                           src={image}
                           alt={`${accommodation.name} ${index + 1}`}
-                          className="w-full h-20 object-cover rounded-lg"
+                          className="w-full h-16 object-cover rounded-lg aspect-square"
                         />
                       ))}
                     </div>

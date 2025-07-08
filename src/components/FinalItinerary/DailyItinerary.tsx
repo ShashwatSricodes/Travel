@@ -113,12 +113,12 @@ const DailyItinerary: React.FC<DailyItineraryProps> = ({ activities, totalDays }
                           </div>
 
                           {/* Activity Images */}
-                          <div className="w-full lg:w-64 flex-shrink-0">
+                          <div className="w-full lg:w-48 flex-shrink-0">
                             {activity.images.length > 0 && (
                               <ImageCarousel
                                 images={activity.images}
                                 title={activity.title}
-                                className="h-40 w-full"
+                                className="h-48 w-48 mx-auto lg:mx-0"
                               />
                             )}
                           </div>

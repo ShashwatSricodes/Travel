@@ -48,7 +48,7 @@ const AccommodationsSection: React.FC<AccommodationsSectionProps> = ({ accommoda
             <ImageCarousel
               images={accommodation.images}
               title={accommodation.name}
-              className="h-48 w-full"
+              className="h-64 w-full"
             />
           </div>
         ))}
