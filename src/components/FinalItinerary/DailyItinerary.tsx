@@ -72,9 +72,9 @@ const DailyItinerary: React.FC<DailyItineraryProps> = ({ activities, totalDays }
                     .sort((a, b) => a.time.localeCompare(b.time))
                     .map((activity) => (
                       <div key={activity.id} className="border border-gray-200 rounded-lg p-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="flex flex-col lg:flex-row gap-6">
                           {/* Activity Details */}
-                          <div className="lg:col-span-2">
+                          <div className="flex-1">
                             <div className="flex items-start gap-4">
                               <div className="flex-shrink-0 mt-1">
                                 <div className="w-10 h-10 bg-[#6ECE9D]/10 rounded-lg flex items-center justify-center text-[#6ECE9D]">
@@ -113,12 +113,14 @@ const DailyItinerary: React.FC<DailyItineraryProps> = ({ activities, totalDays }
                           </div>
 
                           {/* Activity Images */}
-                          <div className="lg:col-span-1">
-                            <ImageCarousel
-                              images={activity.images}
-                              title={activity.title}
-                              className="h-48"
-                            />
+                          <div className="w-full lg:w-64 flex-shrink-0">
+                            {activity.images.length > 0 && (
+                              <ImageCarousel
+                                images={activity.images}
+                                title={activity.title}
+                                className="h-40 w-full"
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
