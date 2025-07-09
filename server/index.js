@@ -32,13 +32,15 @@ const connectDB = async () => {
       socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
     });
     console.log('✅ Connected to MongoDB');
+    return true;
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
     console.log('💡 Make sure MongoDB is running on your system');
     console.log('💡 You can start MongoDB with: mongod --dbpath /path/to/your/db');
     
-    // Don't exit the process, just log the error
-    // This allows the server to start even if MongoDB is not available
+    // Exit the process if MongoDB connection fails
+    console.log('🛑 Server cannot start without database connection');
+    process.exit(1);
   }
 };
 
@@ -55,8 +57,18 @@ mongoose.connection.on('disconnected', () => {
   console.log('⚠️ Mongoose disconnected from MongoDB');
 });
 
-// Connect to MongoDB
-connectDB();
+// Start server function
+const startServer = async () => {
+  // Wait for MongoDB connection before starting server
+  await connectDB();
+  
+  // Start the Express server only after successful DB connection
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📱 Frontend should be available at http://localhost:5173`);
+    console.log(`🔗 API available at http://localhost:${PORT}/api`);
+  });
+};
 
 // API Routes
 app.use('/api/trips', tripRoutes);
@@ -95,8 +107,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📱 Frontend should be available at http://localhost:5173`);
-  console.log(`🔗 API available at http://localhost:${PORT}/api`);
+// Start the server
+startServer().catch((error) => {
+  console.error('❌ Failed to start server:', error);
+  process.exit(1);
 });
