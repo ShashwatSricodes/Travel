@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: evora-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        fromDatabase:
+          name: evora-mongodb
+          property: connectionString
+    domains:
+      - evora-backend.onrender.com
+
+databases:
+  - name: evora-mongodb
+    databaseName: travel-itinerary
+    user: evora-user
+    plan: free
