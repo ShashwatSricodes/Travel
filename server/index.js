@@ -20,7 +20,15 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // MongoDB connection with better error handling and timeout configuration
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/travel-itinerary';
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI environment variable is not set');
+  console.log('💡 Please create a .env file with your MongoDB connection string');
+  console.log('💡 For MongoDB Atlas: MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/travel-itinerary');
+  console.log('💡 For local MongoDB: MONGODB_URI=mongodb://localhost:27017/travel-itinerary');
+  process.exit(1);
+}
 
 // Configure mongoose with better timeout settings
 mongoose.set('bufferCommands', false);
