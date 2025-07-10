@@ -3,14 +3,14 @@ services:
     name: evora-backend
     env: node
     plan: free
-    buildCommand: npm install
-    startCommand: node server/index.js
+    buildCommand: npm install --production
+    startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 5000
+        value: 10000
       - key: MONGODB_URI
         fromDatabase:
           name: evoramongodb

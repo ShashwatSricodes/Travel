@@ -8,7 +8,8 @@
     "dev:client": "vite",
     "dev:server": "nodemon server/index.js",
     "start": "node server/index.js",
-    "build": "vite build",
+    "build": "npm install && vite build",
+    "build:server": "npm install --production",
     "lint": "eslint .",
     "preview": "vite preview"
   },
