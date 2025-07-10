@@ -28,15 +28,19 @@ mongoose.set('bufferCommands', false);
 const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      serverSelectionTimeoutMS: 30000, // Increased timeout for Atlas
       socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+      maxPoolSize: 10, // Maintain up to 10 socket connections
+      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+      heartbeatFrequencyMS: 10000, // Every 10 seconds
     });
     console.log('✅ Connected to MongoDB');
     return true;
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
-    console.log('💡 Make sure MongoDB is running on your system');
-    console.log('💡 You can start MongoDB with: mongod --dbpath /path/to/your/db');
+    console.log('💡 Make sure your MongoDB Atlas connection string is correct');
+    console.log('💡 Check your network connection and Atlas cluster status');
+    console.log('💡 Verify your database user credentials and IP whitelist');
     
     // Exit the process if MongoDB connection fails
     console.log('🛑 Server cannot start without database connection');
