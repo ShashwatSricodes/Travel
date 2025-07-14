@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const { fileURLToPath } = require('url');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -17,57 +16,118 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// MongoDB connection with better error handling and timeout configuration
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI environment variable is not set');
-  console.log('💡 Please create a .env file with your MongoDB connection string');
-  console.log('💡 For MongoDB Atlas: MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/travel-itinerary');
-  console.log('💡 For local MongoDB: MONGODB_URI=mongodb://localhost:27017/travel-itinerary');
-  process.exit(1);
-}
-
-// Configure mongoose with better timeout settings
-mongoose.set('bufferCommands', false);
-
-const connectDB = async () => {
-  try {
-    await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 30000, // Increased timeout for Atlas
-      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-      maxPoolSize: 10, // Maintain up to 10 socket connections
-      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-      heartbeatFrequencyMS: 10000, // Every 10 seconds
-    });
-    console.log('✅ Connected to MongoDB');
-    return true;
-  } catch (error) {
-    console.error('❌ MongoDB connection error:', error.message);
-    console.log('💡 Make sure your MongoDB Atlas connection string is correct');
-    console.log('💡 Check your network connection and Atlas cluster status');
-    console.log('💡 Verify your database user credentials and IP whitelist');
-    
-    // Exit the process if MongoDB connection fails
-    console.log('🛑 Server cannot start without database connection');
-    process.exit(1);
+// MongoDB Trip Schema
+const placeSchema = new mongoose.Schema({
+  day: {
+    type: Number,
+    required: true
+  },
+  location: {
+    lat: {
+      type: Number,
+      required: true
+    },
+    lng: {
+      type: Number,
+      required: true
+    }
+  },
+  name: {
+    type: String,
+    required: true
   }
-};
-
-// Handle MongoDB connection events
-mongoose.connection.on('connected', () => {
-  console.log('✅ Mongoose connected to MongoDB');
 });
 
-mongoose.connection.on('error', (err) => {
-  console.error('❌ Mongoose connection error:', err.message);
+const accommodationSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  startDay: {
+    type: Number,
+    required: true
+  },
+  endDay: {
+    type: Number,
+    required: true
+  },
+  link: {
+    type: String,
+    default: ''
+  },
+  images: [{
+    type: String
+  }]
 });
 
-mongoose.connection.on('disconnected', () => {
-  console.log('⚠️ Mongoose disconnected from MongoDB');
+const activitySchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  day: {
+    type: Number,
+    required: true
+  },
+  type: {
+    type: String,
+    enum: ['activity', 'dining', 'transportation'],
+    required: true
+  },
+  time: {
+    type: String,
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  cost: {
+    type: Number,
+    default: 0
+  },
+  link: {
+    type: String,
+    default: ''
+  },
+  images: [{
+    type: String
+  }]
 });
 
-// Trip Schema
+const tipWarningSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    enum: ['customs', 'scams', 'language', 'safety', 'money', 'general'],
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  priority: {
+    type: String,
+    enum: ['low', 'medium', 'high'],
+    required: true
+  }
+});
+
 const tripSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -84,113 +144,10 @@ const tripSchema = new mongoose.Schema({
     type: String,
     default: 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=1200'
   },
-  places: [{
-    day: {
-      type: Number,
-      required: true
-    },
-    location: {
-      lat: {
-        type: Number,
-        required: true
-      },
-      lng: {
-        type: Number,
-        required: true
-      }
-    },
-    name: {
-      type: String,
-      required: true
-    }
-  }],
-  accommodations: [{
-    id: {
-      type: String,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
-    },
-    startDay: {
-      type: Number,
-      required: true
-    },
-    endDay: {
-      type: Number,
-      required: true
-    },
-    link: {
-      type: String,
-      default: ''
-    },
-    images: [{
-      type: String
-    }]
-  }],
-  activities: [{
-    id: {
-      type: String,
-      required: true
-    },
-    day: {
-      type: Number,
-      required: true
-    },
-    type: {
-      type: String,
-      enum: ['activity', 'dining', 'transportation'],
-      required: true
-    },
-    time: {
-      type: String,
-      required: true
-    },
-    title: {
-      type: String,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    },
-    cost: {
-      type: Number,
-      default: 0
-    },
-    link: {
-      type: String,
-      default: ''
-    },
-    images: [{
-      type: String
-    }]
-  }],
-  tips: [{
-    id: {
-      type: String,
-      required: true
-    },
-    category: {
-      type: String,
-      enum: ['customs', 'scams', 'language', 'safety', 'money', 'general'],
-      required: true
-    },
-    title: {
-      type: String,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    },
-    priority: {
-      type: String,
-      enum: ['low', 'medium', 'high'],
-      required: true
-    }
-  }],
+  places: [placeSchema],
+  accommodations: [accommodationSchema],
+  activities: [activitySchema],
+  tips: [tipWarningSchema],
   createdBy: {
     type: String,
     default: 'anonymous'
@@ -221,13 +178,38 @@ tripSchema.pre('save', function(next) {
 
 const Trip = mongoose.model('Trip', tripSchema);
 
-// Routes
+// MongoDB connection
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI environment variable is not set');
+  process.exit(1);
+}
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
+      heartbeatFrequencyMS: 10000,
+    });
+    console.log('✅ Connected to MongoDB');
+    return true;
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error.message);
+    process.exit(1);
+  }
+};
+
+// Trip Routes
+const router = express.Router();
+
 // Create a new trip
-app.post('/api/trips', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const tripData = req.body;
     
-    // Validate required fields
     if (!tripData.title || !tripData.duration) {
       return res.status(400).json({
         error: 'Title and duration are required'
@@ -252,7 +234,7 @@ app.post('/api/trips', async (req, res) => {
 });
 
 // Get all trips
-app.get('/api/trips', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10, search } = req.query;
     const query = search 
@@ -292,11 +274,10 @@ app.get('/api/trips', async (req, res) => {
 });
 
 // Get a specific trip by ID or slug
-app.get('/api/trips/:identifier', async (req, res) => {
+router.get('/:identifier', async (req, res) => {
   try {
     const { identifier } = req.params;
     
-    // Try to find by slug first, then by ID
     let trip = await Trip.findOne({ slug: identifier });
     if (!trip) {
       trip = await Trip.findById(identifier);
@@ -322,7 +303,7 @@ app.get('/api/trips/:identifier', async (req, res) => {
 });
 
 // Update a trip
-app.put('/api/trips/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -354,7 +335,7 @@ app.put('/api/trips/:id', async (req, res) => {
 });
 
 // Delete a trip
-app.delete('/api/trips/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     
@@ -379,6 +360,9 @@ app.delete('/api/trips/:id', async (req, res) => {
   }
 });
 
+// Use trip routes
+app.use('/api/trips', router);
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   const mongoStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
@@ -393,7 +377,6 @@ app.get('/api/health', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../dist')));
   
-  // Handle React Router - send all non-API requests to index.html
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
   });
@@ -413,20 +396,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server function
+// Start server
 const startServer = async () => {
-  // Wait for MongoDB connection before starting server
   await connectDB();
   
-  // Start the Express server only after successful DB connection
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📱 Frontend should be available at http://localhost:5173`);
     console.log(`🔗 API available at http://localhost:${PORT}/api`);
   });
 };
 
-// Start the server
 startServer().catch((error) => {
   console.error('❌ Failed to start server:', error);
   process.exit(1);

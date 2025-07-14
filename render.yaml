@@ -3,8 +3,8 @@ services:
     name: evora-backend
     env: node
     plan: free
-    buildCommand: npm install --production
-    startCommand: npm start
+    buildCommand: cd server && npm install --production
+    startCommand: cd server && node index.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
