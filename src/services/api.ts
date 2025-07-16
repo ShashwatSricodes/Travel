@@ -1,6 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || (
   import.meta.env.MODE === 'production' 
-    ? 'https://evora-backend.onrender.com/api'  // Your Render backend URL
+    ? 'https://travel-1-tngg.onrender.com/api'  // Your Render backend URL
     : 'http://localhost:5000/api'
 );
 
